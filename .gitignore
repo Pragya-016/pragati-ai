@@ -1,0 +1,17 @@
+# Secret keys - NEVER upload
+backend/.env
+
+# Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Node
+node_modules/
+
+# Logs
+backend/blockchain_log.json
+
+# OS
+.DS_Store
+Thumbs.dbblockchain_log.json 
