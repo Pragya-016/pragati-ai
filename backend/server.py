@@ -18,7 +18,6 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 from fastapi.responses import FileResponse
-import os as _os, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import httpx
 from pydantic import BaseModel
@@ -1045,12 +1044,12 @@ async def get_risk_metrics():
 
 @app.get("/app", response_class=FileResponse)
 async def serve_frontend():
-    frontend_path = _os.path.join(_os.path.dirname(__file__), "..", "frontend", "index.html")
+    frontend_path = os.path.join(os.path.dirname(__file__), "..", "frontend", "index.html")
     return FileResponse(frontend_path)
 
 try:
-    _frontend_dir = _os.path.join(_os.path.dirname(__file__), "..", "frontend")
-    if _os.path.exists(_frontend_dir):
+    _frontend_dir = os.path.join(os.path.dirname(__file__), "..", "frontend")
+    if os.path.exists(_frontend_dir):
         app.mount("/static", StaticFiles(directory=_frontend_dir), name="static")
 except Exception as _e:
     print(f"[Frontend] Could not mount static files: {_e}")
