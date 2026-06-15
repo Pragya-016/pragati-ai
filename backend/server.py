@@ -25,7 +25,7 @@ import pathlib
 load_dotenv()                           # reads .env file if present
 
 # ML module (must import after dotenv)
-from backend.ml_models import ml_service
+from ml_models import ml_service
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Application Setup
@@ -803,12 +803,13 @@ async def enrich_holdings(raw: List[dict]) -> dict:
 # ─────────────────────────────────────────────────────────────────────────────
 
 # Serve frontend
-BASE_DIR = pathlib.Path(__file__).parent.parent  # points to pragati4/
-app.mount("/static", StaticFiles(directory=BASE_DIR / "frontend"), name="static")
+BASE_DIR = pathlib.Path(__file__).resolve().parent.parent  # pragati4/
+FRONTEND_DIR = BASE_DIR / "frontend"
+app.mount("/static", StaticFiles(directory=FRONTEND_DIR), name="static")
 
 @app.get("/")
 async def root():
-    return FileResponse(BASE_DIR / "frontend" / "index.html")
+    return FileResponse(FRONTEND_DIR / "index.html")
 
 
 @app.get("/health")
