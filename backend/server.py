@@ -15,14 +15,15 @@ import concurrent.futures
 from typing import List, Dict, Any, Optional
 
 from dotenv import load_dotenv
-from fastapi import FastAPI
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import httpx
 from pydantic import BaseModel
 
 load_dotenv()                           # reads .env file if present
+
+# ML module (must import after dotenv)
+from backend.ml_models import ml_service
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Application Setup
@@ -93,7 +94,7 @@ PORTFOLIO_HOLDINGS = [
     {"symbol": "WIPRO.NS",       "display_symbol": "WIPRO",      "name": "Wipro Ltd",                   "quantity": 100, "avg_price": 420.00,  "sector": "IT"},
     {"symbol": "BAJFINANCE.NS",  "display_symbol": "BAJFINANCE", "name": "Bajaj Finance Ltd",           "quantity": 20,  "avg_price": 6800.00, "sector": "NBFC"},
     {"symbol": "ICICIBANK.NS",   "display_symbol": "ICICIBANK",  "name": "ICICI Bank Ltd",              "quantity": 90,  "avg_price": 950.00,  "sector": "Banking"},
-    {"symbol": "TATAMOTORS.BO",  "display_symbol": "TATAMOTORS", "name": "Tata Motors Ltd",             "quantity": 120, "avg_price": 580.00,  "sector": "Auto"},
+    {"symbol": "TATAMOTORS.NS",  "display_symbol": "TATAMOTORS", "name": "Tata Motors Ltd",             "quantity": 120, "avg_price": 580.00,  "sector": "Auto"},
     {"symbol": "SUNPHARMA.NS",   "display_symbol": "SUNPHARMA",  "name": "Sun Pharmaceutical Ltd",      "quantity": 45,  "avg_price": 1100.00, "sector": "Pharma"},
     {"symbol": "ADANIPORTS.NS",  "display_symbol": "ADANIPORTS", "name": "Adani Ports and SEZ Ltd",     "quantity": 70,  "avg_price": 780.00,  "sector": "Infrastructure"},
 ]
@@ -106,7 +107,7 @@ MOCK_PRICES: Dict[str, Dict] = {
     "WIPRO.NS":      {"ltp":  467.30, "change":  -3.20, "change_pct": -0.68},
     "BAJFINANCE.NS": {"ltp": 7234.50, "change": 156.80, "change_pct":  2.22},
     "ICICIBANK.NS":  {"ltp": 1089.70, "change":  14.30, "change_pct":  1.33},
-    "TATAMOTORS.BO": {"ltp":  623.40, "change":   8.60, "change_pct":  1.40},
+    "TATAMOTORS.NS": {"ltp":  623.40, "change":   8.60, "change_pct":  1.40},
     "SUNPHARMA.NS":  {"ltp": 1234.80, "change": -22.40, "change_pct": -1.78},
     "ADANIPORTS.NS": {"ltp":  867.20, "change":  19.80, "change_pct":  2.34},
     "^NSEI":         {"ltp": 22450.75,"change": 124.35, "change_pct":  0.56},
@@ -695,76 +696,28 @@ def agent_ethics_risk(age: int, risk_tolerance: str, scenario: str) -> dict:
     }
 
 
-async def call_groq_ai(prompt: str, fallback: str) -> str:
-    """Call Groq API for AI-generated advice. Falls back to static text if key missing."""
-    groq_key = os.getenv("GROQ_API_KEY", "")
-    if not groq_key:
-        return fallback
-    try:
-        async with httpx.AsyncClient(timeout=15.0) as client:
-            resp = await client.post(
-                "https://api.groq.com/openai/v1/chat/completions",
-                headers={
-                    "Authorization": f"Bearer {groq_key}",
-                    "Content-Type": "application/json",
-                },
-                json={
-                    "model": "llama3-8b-8192",
-                    "messages": [
-                        {"role": "system", "content": "You are PRAGATI.AI, an ethical AI portfolio advisor for Indian retail investors. Give concise, actionable advice in 2-3 sentences. Be direct and practical."},
-                        {"role": "user", "content": prompt}
-                    ],
-                    "max_tokens": 150,
-                    "temperature": 0.7,
-                }
-            )
-        if resp.status_code == 200:
-            return resp.json()["choices"][0]["message"]["content"].strip()
-        print(f"[Groq] Error {resp.status_code}: {resp.text[:100]}")
-    except Exception as e:
-        print(f"[Groq] {e}")
-    return fallback
-
-
-async def synthesize_decision(agents: List[dict]) -> dict:
+def synthesize_decision(agents: List[dict]) -> dict:
     verdicts      = [a["verdict"] for a in agents]
     trade_freezes = [a.get("trade_freeze", False) for a in agents]
     mixed         = verdicts.count("WARN") + verdicts.count("CAUTION")
 
-    if   "REFUSE" in verdicts:           final, freeze = "REFUSED", True
-    elif mixed >= 2:                     final, freeze = "CAUTION", any(trade_freezes)
+    if   "REFUSE" in verdicts:      final, freeze = "REFUSED", True
+    elif mixed >= 2:                final, freeze = "CAUTION", any(trade_freezes)
     elif verdicts.count("APPROVE") >= 3: final, freeze = "APPROVED", False
-    else:                                final, freeze = "CAUTION", any(trade_freezes)
+    else:                           final, freeze = "CAUTION", any(trade_freezes)
 
     avg_conf = sum(a["score"] for a in agents) / len(agents)
-
-    fallback_map = {
+    advice_map = {
         "APPROVED": "AI consensus is positive. Portfolio health is strong and market conditions are favorable. Proceed with your planned investment strategy.",
         "CAUTION":  "AI consensus flags mixed signals. Consider reviewing portfolio allocation and avoid new leveraged positions until clarity improves.",
         "REFUSED":  "AI consensus indicates high-risk environment. New investments are not advised. Prioritize capital preservation and activate stop-losses.",
     }
-
-    # Build context for Groq
-    findings_summary = " | ".join(
-        f"{a['agent_name']}: {a['verdict']} (score {a['score']})"
-        for a in agents
-    )
-    groq_prompt = (
-        "Based on this multi-agent analysis for an Indian retail investor: "
-        + findings_summary
-        + f" Overall decision: {final}. Trade freeze: {freeze}."
-        + " Give a brief, actionable investment recommendation."
-    )
-
-    advice = await call_groq_ai(groq_prompt, fallback_map[final])
-
     return {
-        "final_decision":   final,
-        "trade_freeze":     freeze,
+        "final_decision":  final,
+        "trade_freeze":    freeze,
         "confidence_score": round(avg_conf, 2),
-        "advice":           advice,
-        "ai_powered":       bool(os.getenv("GROQ_API_KEY", "")),
-        "agent_verdicts": {
+        "advice":          advice_map[final],
+        "agent_verdicts":  {
             "portfolio_health": verdicts[0],
             "market_regime":    verdicts[1],
             "news_sentiment":   verdicts[2],
@@ -947,7 +900,7 @@ async def run_analysis(req: AnalysisRequest):
     a3 = agent_news_sentiment(MOCK_NEWS)
     a4 = agent_ethics_risk(req.age, req.risk_tolerance, scenario)
 
-    synthesis = await synthesize_decision([a1, a2, a3, a4])
+    synthesis = synthesize_decision([a1, a2, a3, a4])
 
     block = await add_block(
         decision       = synthesis["final_decision"],
@@ -1039,20 +992,51 @@ async def get_risk_metrics():
     }
 
 # ─────────────────────────────────────────────────────────────────────────────
-# Serve Frontend
+# ML / AI Endpoints
 # ─────────────────────────────────────────────────────────────────────────────
 
-@app.get("/app", response_class=FileResponse)
-async def serve_frontend():
-    frontend_path = os.path.join(os.path.dirname(__file__), "..", "frontend", "index.html")
-    return FileResponse(frontend_path)
+@app.get("/api/ml/insights")
+async def get_ml_insights():
+    """Full ML insights: stock predictions + market regime + portfolio risk."""
+    enriched = await enrich_holdings(PORTFOLIO_HOLDINGS)
+    holdings = enriched["holdings"]
+    indices  = await fetch_live_indices()
+    insights = ml_service.get_full_insights(holdings, indices)
+    return {**insights, "timestamp": datetime.datetime.utcnow().isoformat()}
 
-try:
-    _frontend_dir = os.path.join(os.path.dirname(__file__), "..", "frontend")
-    if os.path.exists(_frontend_dir):
-        app.mount("/static", StaticFiles(directory=_frontend_dir), name="static")
-except Exception as _e:
-    print(f"[Frontend] Could not mount static files: {_e}")
+
+@app.get("/api/ml/regime")
+async def get_ml_regime():
+    """K-Means market regime detection."""
+    indices = await fetch_live_indices()
+    regime  = ml_service.get_market_regime(indices)
+    return {**regime, "indices_snapshot": indices, "timestamp": datetime.datetime.utcnow().isoformat()}
+
+
+@app.get("/api/ml/risk")
+async def get_ml_risk():
+    """HHI-based portfolio risk score."""
+    enriched = await enrich_holdings(PORTFOLIO_HOLDINGS)
+    risk     = ml_service.get_portfolio_risk(enriched["holdings"])
+    return {**risk, "timestamp": datetime.datetime.utcnow().isoformat()}
+
+
+@app.get("/api/ml/predict/{symbol}")
+async def predict_stock(symbol: str):
+    """Random Forest direction prediction for a single stock."""
+    yahoo_sym = symbol if "." in symbol else f"{symbol}.NS"
+    prices    = await fetch_live_prices([yahoo_sym])
+    pd_data   = prices.get(yahoo_sym, {"ltp": 1000, "change_pct": 0})
+    prediction = ml_service.get_stock_predictions([{
+        "display_symbol": symbol,
+        "symbol": yahoo_sym,
+        "ltp": pd_data["ltp"],
+        "change_pct": pd_data.get("change_pct", 0),
+        "avg_price": pd_data["ltp"],
+        "quantity": 1,
+    }])
+    return {**prediction[0], "timestamp": datetime.datetime.utcnow().isoformat()}
+
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Entry Point
