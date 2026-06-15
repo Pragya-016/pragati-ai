@@ -25,7 +25,7 @@ import pathlib
 load_dotenv()                           # reads .env file if present
 
 # ML module (must import after dotenv)
-from ml_models import ml_service
+from backend.ml_models import ml_service
 
 # ─────────────────────────────────────────────────────────────────────────────
 # Application Setup
