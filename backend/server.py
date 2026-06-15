@@ -19,7 +19,9 @@ from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 import httpx
 from pydantic import BaseModel
-
+from fastapi.staticfiles import StaticFiles
+from fastapi.responses import FileResponse
+import pathlib
 load_dotenv()                           # reads .env file if present
 
 # ML module (must import after dotenv)
@@ -800,12 +802,13 @@ async def enrich_holdings(raw: List[dict]) -> dict:
 # API Endpoints
 # ─────────────────────────────────────────────────────────────────────────────
 
+# Serve frontend
+BASE_DIR = pathlib.Path(__file__).parent.parent  # points to pragati4/
+app.mount("/static", StaticFiles(directory=BASE_DIR / "frontend"), name="static")
+
 @app.get("/")
 async def root():
-    return {
-        "name": "PRAGATI.AI", "version": "2.0.0", "status": "operational",
-        "features": ["yfinance (NSE/BSE live prices)", "IPFS via Pinata", "Ethereum Sepolia", "SHA-256 local chain", "4 AI agents"],
-    }
+    return FileResponse(BASE_DIR / "frontend" / "index.html")
 
 
 @app.get("/health")
