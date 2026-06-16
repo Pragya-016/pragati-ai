@@ -1,0 +1,142 @@
+[
+  {
+    "index": 0,
+    "timestamp": "2024-01-01T00:00:00",
+    "decision": "GENESIS",
+    "advice": "PRAGATI.AI Blockchain Initialized",
+    "trade_freeze": false,
+    "confidence_score": 100.0,
+    "wallet_address": "0x0000000000000000000000000000000000000000",
+    "agent_verdicts": {
+      "portfolio_health": "GENESIS",
+      "market_regime": "GENESIS",
+      "news_sentiment": "GENESIS",
+      "ethics_risk": "GENESIS"
+    },
+    "previous_hash": "0000000000000000000000000000000000000000000000000000000000000000",
+    "nonce": 0,
+    "ipfs_cid": "",
+    "eth_tx_hash": "",
+    "hash": "1948f1c23c69cf52922636423238b8b19d699bb750666d523dd0f94e0bf9fcd8"
+  },
+  {
+    "index": 1,
+    "timestamp": "2026-06-13T06:47:16.803677",
+    "decision": "APPROVED",
+    "advice": "AI consensus is positive. Portfolio health is strong and market conditions are favorable. Proceed with your planned investment strategy.",
+    "trade_freeze": false,
+    "confidence_score": 73.12,
+    "wallet_address": "0xUser123abc456def789",
+    "agent_verdicts": {
+      "portfolio_health": "CAUTION",
+      "market_regime": "APPROVE",
+      "news_sentiment": "APPROVE",
+      "ethics_risk": "APPROVE"
+    },
+    "previous_hash": "1948f1c23c69cf52922636423238b8b19d699bb750666d523dd0f94e0bf9fcd8",
+    "nonce": 78900,
+    "ipfs_cid": "",
+    "eth_tx_hash": "",
+    "hash": "70528040a0df2a93425eeb0390438cf869c8bc3a48013aa7dd7b5b2c2e7840a3"
+  },
+  {
+    "index": 2,
+    "timestamp": "2026-06-13T13:02:27.239623",
+    "decision": "APPROVED",
+    "advice": "AI consensus is positive. Portfolio health is strong and market conditions are favorable. Proceed with your planned investment strategy.",
+    "trade_freeze": false,
+    "confidence_score": 73.12,
+    "wallet_address": "0xUser123abc456def789",
+    "agent_verdicts": {
+      "portfolio_health": "CAUTION",
+      "market_regime": "APPROVE",
+      "news_sentiment": "APPROVE",
+      "ethics_risk": "APPROVE"
+    },
+    "previous_hash": "70528040a0df2a93425eeb0390438cf869c8bc3a48013aa7dd7b5b2c2e7840a3",
+    "nonce": 56129,
+    "ipfs_cid": "",
+    "eth_tx_hash": "",
+    "hash": "491669671f583b94d3f3b34a330500254ac2a7fdf2c5cf0d857976bf40883afa"
+  },
+  {
+    "index": 3,
+    "timestamp": "2026-06-15T05:10:59.498752",
+    "decision": "APPROVED",
+    "advice": "AI consensus is positive. Portfolio health is strong and market conditions are favorable. Proceed with your planned investment strategy.",
+    "trade_freeze": false,
+    "confidence_score": 73.12,
+    "wallet_address": "0xUser123abc456def789",
+    "agent_verdicts": {
+      "portfolio_health": "CAUTION",
+      "market_regime": "APPROVE",
+      "news_sentiment": "APPROVE",
+      "ethics_risk": "APPROVE"
+    },
+    "previous_hash": "491669671f583b94d3f3b34a330500254ac2a7fdf2c5cf0d857976bf40883afa",
+    "nonce": 56246,
+    "ipfs_cid": "",
+    "eth_tx_hash": "",
+    "hash": "8728c6393e2b88ec4125e0dc1aab4b2a6c85165c915fc9d36b457e7658eb6160"
+  },
+  {
+    "index": 4,
+    "timestamp": "2026-06-15T15:07:02.413463",
+    "decision": "APPROVED",
+    "advice": "AI consensus is positive. Portfolio health is strong and market conditions are favorable. Proceed with your planned investment strategy.",
+    "trade_freeze": false,
+    "confidence_score": 73.12,
+    "wallet_address": "0xUser123abc456def789",
+    "agent_verdicts": {
+      "portfolio_health": "CAUTION",
+      "market_regime": "APPROVE",
+      "news_sentiment": "APPROVE",
+      "ethics_risk": "APPROVE"
+    },
+    "previous_hash": "8728c6393e2b88ec4125e0dc1aab4b2a6c85165c915fc9d36b457e7658eb6160",
+    "nonce": 25329,
+    "ipfs_cid": "",
+    "eth_tx_hash": "",
+    "hash": "00da56fe5ebe824ef8c01bb176fedc9a09656704787882bc73afe3b03797cc24"
+  },
+  {
+    "index": 5,
+    "timestamp": "2026-06-16T07:06:13.639053",
+    "decision": "APPROVED",
+    "advice": "AI consensus is positive. Portfolio health is strong and market conditions are favorable. Proceed with your planned investment strategy.",
+    "trade_freeze": false,
+    "confidence_score": 73.12,
+    "wallet_address": "0xUser123abc456def789",
+    "agent_verdicts": {
+      "portfolio_health": "CAUTION",
+      "market_regime": "APPROVE",
+      "news_sentiment": "APPROVE",
+      "ethics_risk": "APPROVE"
+    },
+    "previous_hash": "00da56fe5ebe824ef8c01bb176fedc9a09656704787882bc73afe3b03797cc24",
+    "nonce": 92442,
+    "ipfs_cid": "",
+    "eth_tx_hash": "",
+    "hash": "464a3e44ebcfde7eb085177f5151dda96b4c5096c3107742303f7fa583c598be"
+  },
+  {
+    "index": 6,
+    "timestamp": "2026-06-16T07:18:50.823892",
+    "decision": "APPROVED",
+    "advice": "AI consensus is positive. Portfolio health is strong and market conditions are favorable. Proceed with your planned investment strategy.",
+    "trade_freeze": false,
+    "confidence_score": 73.12,
+    "wallet_address": "0xUser123abc456def789",
+    "agent_verdicts": {
+      "portfolio_health": "CAUTION",
+      "market_regime": "APPROVE",
+      "news_sentiment": "APPROVE",
+      "ethics_risk": "APPROVE"
+    },
+    "previous_hash": "464a3e44ebcfde7eb085177f5151dda96b4c5096c3107742303f7fa583c598be",
+    "nonce": 90169,
+    "ipfs_cid": "",
+    "eth_tx_hash": "",
+    "hash": "1bcf5c23e1575a8bd964f20f40fd53e6542e4c8115ae961a6faa0e54d9419294"
+  }
+]

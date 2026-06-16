@@ -539,6 +539,72 @@
 </head>
 <body>
 
+<!-- ═══════════════ WAKE / BOOT LOADER ═══════════════ -->
+<div id="wakeLoader" style="display:none;position:fixed;inset:0;z-index:9999;align-items:center;justify-content:center;flex-direction:column;background:linear-gradient(135deg,#0f172a 0%,#1e1b4b 40%,#0f2744 100%);">
+  <div style="position:absolute;inset:0;overflow:hidden;pointer-events:none">
+    <div style="position:absolute;width:500px;height:500px;top:-120px;left:-150px;background:radial-gradient(circle,rgba(96,165,250,0.18) 0%,transparent 70%);animation:orbFloat 7s ease-in-out infinite;border-radius:50%"></div>
+    <div style="position:absolute;width:400px;height:400px;bottom:-100px;right:-100px;background:radial-gradient(circle,rgba(167,139,250,0.18) 0%,transparent 70%);animation:orbFloat 9s ease-in-out infinite reverse;border-radius:50%"></div>
+    <div style="position:absolute;width:300px;height:300px;top:50%;left:60%;background:radial-gradient(circle,rgba(52,201,163,0.10) 0%,transparent 70%);animation:orbFloat 11s ease-in-out infinite 2s;border-radius:50%"></div>
+    <div class="wake-particle" style="left:15%;top:25%;animation-delay:0s"></div>
+    <div class="wake-particle" style="left:30%;top:60%;animation-delay:0.8s"></div>
+    <div class="wake-particle" style="left:55%;top:20%;animation-delay:1.6s"></div>
+    <div class="wake-particle" style="left:70%;top:70%;animation-delay:0.4s"></div>
+    <div class="wake-particle" style="left:85%;top:35%;animation-delay:1.2s"></div>
+    <div class="wake-particle" style="left:45%;top:80%;animation-delay:2s"></div>
+  </div>
+  <div style="position:relative;text-align:center;padding:48px 56px;max-width:480px;width:90%;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.10);border-radius:28px;backdrop-filter:blur(24px);box-shadow:0 32px 80px rgba(0,0,0,0.4)">
+    <div style="display:inline-flex;align-items:center;gap:14px;margin-bottom:28px">
+      <div style="width:52px;height:52px;border-radius:16px;display:flex;align-items:center;justify-content:center;font-size:24px;font-weight:800;color:#fff;background:linear-gradient(135deg,#60A5FA,#A78BFA);box-shadow:0 8px 24px rgba(96,165,250,0.4)">P</div>
+      <div style="text-align:left">
+        <div style="font-size:22px;font-weight:800;color:#fff;letter-spacing:-0.5px">PRAGATI<span style="color:#60A5FA">.AI</span></div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.4);letter-spacing:1.5px;text-transform:uppercase;margin-top:2px">Portfolio Intelligence</div>
+      </div>
+    </div>
+    <div style="position:relative;width:80px;height:80px;margin:0 auto 28px">
+      <svg viewBox="0 0 80 80" style="width:80px;height:80px;animation:spin 2s linear infinite">
+        <circle cx="40" cy="40" r="34" fill="none" stroke="rgba(96,165,250,0.15)" stroke-width="4"/>
+        <circle cx="40" cy="40" r="34" fill="none" stroke="url(#wakeGrad)" stroke-width="4" stroke-dasharray="60 154" stroke-linecap="round"/>
+        <defs><linearGradient id="wakeGrad" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#60A5FA"/><stop offset="100%" stop-color="#A78BFA"/></linearGradient></defs>
+      </svg>
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center">
+        <div style="width:12px;height:12px;border-radius:50%;background:linear-gradient(135deg,#60A5FA,#A78BFA);animation:pulse 1.5s ease-in-out infinite"></div>
+      </div>
+    </div>
+    <div id="wakeMsg" style="font-size:17px;font-weight:700;color:#fff;margin-bottom:8px;min-height:26px">Initialising PRAGATI.AI...</div>
+    <div id="wakeSubMsg" style="font-size:13px;color:rgba(255,255,255,0.45);margin-bottom:28px;min-height:20px">Connecting to live market data feeds</div>
+    <div style="height:4px;background:rgba(255,255,255,0.08);border-radius:99px;overflow:hidden;margin-bottom:20px">
+      <div id="wakeProgress" style="height:100%;width:0%;border-radius:99px;transition:width 0.8s ease;background:linear-gradient(90deg,#60A5FA,#A78BFA,#34C9A3)"></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;margin-bottom:24px">
+      <div class="wake-step active" id="wstep0"><div class="wake-step-dot"></div><div class="wake-step-lbl">Server</div></div>
+      <div class="wake-step" id="wstep1"><div class="wake-step-dot"></div><div class="wake-step-lbl">ML Models</div></div>
+      <div class="wake-step" id="wstep2"><div class="wake-step-dot"></div><div class="wake-step-lbl">Market Data</div></div>
+      <div class="wake-step" id="wstep3"><div class="wake-step-dot"></div><div class="wake-step-lbl">Portfolio</div></div>
+      <div class="wake-step" id="wstep4"><div class="wake-step-dot"></div><div class="wake-step-lbl">Ready</div></div>
+    </div>
+    <div style="padding:12px 16px;background:rgba(255,255,255,0.05);border-radius:12px;border:1px solid rgba(255,255,255,0.07)">
+      <div style="font-size:10px;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,0.3);margin-bottom:5px">Did you know?</div>
+      <div id="wakeFact" style="font-size:12px;color:rgba(255,255,255,0.55);line-height:1.5;min-height:36px"></div>
+    </div>
+    <div id="wakeTimer" style="font-size:11px;color:rgba(255,255,255,0.2);margin-top:16px;letter-spacing:0.5px"></div>
+  </div>
+  <style>
+    @keyframes orbFloat{0%,100%{transform:translate(0,0) scale(1)}50%{transform:translate(20px,-30px) scale(1.05)}}
+    @keyframes particleFade{0%,100%{opacity:0;transform:translateY(0) scale(0.5)}50%{opacity:1;transform:translateY(-20px) scale(1)}}
+    .wake-particle{position:absolute;width:4px;height:4px;border-radius:50%;background:rgba(142,197,252,0.5);animation:particleFade 3s ease-in-out infinite}
+    .wake-step{display:flex;flex-direction:column;align-items:center;gap:5px;opacity:0.3;transition:all 0.4s}
+    .wake-step.active{opacity:1}
+    .wake-step.done{opacity:0.7}
+    .wake-step-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.2);transition:all 0.4s}
+    .wake-step.active .wake-step-dot{background:linear-gradient(135deg,#60A5FA,#A78BFA);box-shadow:0 0 10px rgba(96,165,250,0.6)}
+    .wake-step.done .wake-step-dot{background:#34C9A3}
+    .wake-step-lbl{font-size:10px;color:rgba(255,255,255,0.4);letter-spacing:0.3px;white-space:nowrap}
+    .wake-step.active .wake-step-lbl{color:rgba(255,255,255,0.75)}
+    .wake-step.done .wake-step-lbl{color:#34C9A3}
+  </style>
+</div>
+
+
 <!-- ═══════════════ LOGIN SCREEN ═══════════════ -->
 <div id="loginScreen">
   <div class="login-wrap">
@@ -613,6 +679,9 @@
       </button>
       <button type="button" class="btn btn-ghost" onclick="useExamplePortfolio()">
         <i data-lucide="database"></i> Use Example Portfolio
+      </button>
+      <button type="button" class="btn btn-ghost" onclick="goBackToLogin()" style="border-color:var(--border);color:var(--text-3)">
+        <i data-lucide="arrow-left"></i> Back to Login
       </button>
     </div>
     <p id="setupError" style="color:var(--danger);font-size:13px;margin-top:12px;display:none"></p>
@@ -1115,6 +1184,13 @@ function showError(el, msg) {
   el.style.display = 'block';
 }
 
+function goBackToLogin() {
+  APP.user = null; APP.portfolio = null;
+  document.getElementById('setupScreen').style.display = 'none';
+  document.getElementById('loginScreen').style.display = 'flex';
+  showLoginTab('signin');
+}
+
 function showSetupScreen() {
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('setupScreen').style.display = 'block';
@@ -1156,7 +1232,8 @@ function enterApp() {
   // Load service status pills
   loadServiceStatus();
 
-  loadDashboard();
+  // First load — show wake-up screen while server boots
+  showWakeLoader(() => loadDashboard()).catch(() => loadDashboard());
   loadRecommendations('conservative');
 }
 
@@ -1285,18 +1362,152 @@ async function refreshAll() {
 // ════════════════════════════════════════════════
 // DASHBOARD
 // ════════════════════════════════════════════════
+async function showWakeLoader(apiFn) {
+  const loader = document.getElementById('wakeLoader');
+  const msg    = document.getElementById('wakeMsg');
+  const sub    = document.getElementById('wakeSubMsg');
+  const bar    = document.getElementById('wakeProgress');
+  const timer  = document.getElementById('wakeTimer');
+  const factEl = document.getElementById('wakeFact');
+
+  loader.style.display = 'flex';
+
+  const steps = [
+    [0,  0, 'Waking up server...', 'Starting the Python runtime'],
+    [5,  1, 'Loading ML models...', 'Random Forest & K-Means warming up'],
+    [12, 2, 'Connecting to market data...', 'Fetching live NSE/BSE prices via yfinance'],
+    [20, 3, 'Enriching your portfolio...', 'Calculating P&L, beta, Sharpe ratio'],
+    [28, 4, 'Almost ready...', 'Running blockchain integrity check'],
+  ];
+
+  const facts = [
+    'PRAGATI.AI uses a Random Forest model trained on RSI, MACD & Bollinger Bands to predict stock direction.',
+    'Your decisions are logged on the Ethereum Sepolia testnet — tamper-proof and permanently auditable.',
+    'The K-Means clustering engine detects 4 market regimes: Bull, Bear, Sideways & High Volatility.',
+    'HHI (Herfindahl-Hirschman Index) measures your portfolio concentration risk across sectors.',
+    'NSE has over 2,000 listed companies. PRAGATI.AI helps you pick the right ones.',
+    'Sharpe ratio above 1.0 means your returns outpace the risk taken — a hallmark of smart investing.',
+    'Blockchain audit logs make PRAGATI.AI decisions 100% transparent and explainable.',
+  ];
+
+  let factIdx = 0;
+  function rotateFact() {
+    if (!factEl) return;
+    factEl.style.opacity = '0';
+    factEl.style.transition = 'opacity 0.4s';
+    setTimeout(() => {
+      factEl.textContent = facts[factIdx % facts.length];
+      factEl.style.opacity = '1';
+      factIdx++;
+    }, 400);
+  }
+  rotateFact();
+  const factInterval = setInterval(rotateFact, 4000);
+
+  function setStep(idx) {
+    for (let i = 0; i < 5; i++) {
+      const el = document.getElementById('wstep' + i);
+      if (!el) continue;
+      el.classList.remove('active', 'done');
+      if (i < idx) el.classList.add('done');
+      else if (i === idx) el.classList.add('active');
+    }
+  }
+
+  let elapsed = 0;
+  const interval = setInterval(() => {
+    elapsed++;
+    if (timer) timer.textContent = elapsed + 's';
+    const pct = Math.min(93, (elapsed / 32) * 100);
+    if (bar) bar.style.width = pct + '%';
+    const step = [...steps].reverse().find(([t]) => elapsed >= t);
+    if (step) {
+      if (msg) msg.textContent = step[2];
+      if (sub) sub.textContent = step[3];
+      setStep(step[1]);
+    }
+  }, 1000);
+
+  try {
+    const result = await apiFn();
+    clearInterval(interval);
+    clearInterval(factInterval);
+    setStep(4);
+    if (bar) bar.style.width = '100%';
+    if (msg) msg.textContent = 'Portfolio loaded!';
+    if (sub) sub.textContent = 'Welcome to PRAGATI.AI';
+    await new Promise(r => setTimeout(r, 700));
+    loader.style.opacity = '0';
+    loader.style.transition = 'opacity 0.4s ease';
+    await new Promise(r => setTimeout(r, 400));
+    loader.style.display = 'none';
+    loader.style.opacity = '1';
+    loader.style.transition = '';
+    return result;
+  } catch(e) {
+    clearInterval(interval);
+    clearInterval(factInterval);
+    loader.style.display = 'none';
+    throw e;
+  }
+}
+
+// ── Simple in-memory cache to avoid re-fetching on tab switch ──
+const _cache = {};
+async function _cached(key, fetchFn, ttlMs = 60000) {
+  const now = Date.now();
+  if (_cache[key] && (now - _cache[key].ts) < ttlMs) return _cache[key].data;
+  const data = await fetchFn();
+  _cache[key] = { data, ts: now };
+  return data;
+}
+
 async function loadDashboard() {
   try {
     const portfolioEndpoint = APP.portfolio
-      ? fetch(`${API}/api/portfolio/enrich`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(APP.portfolio)}).then(r=>r.json())
-      : fetch(`${API}/api/portfolio`).then(r=>r.json());
+      ? _cached('portfolio_custom', () => fetch(`${API}/api/portfolio/enrich`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(APP.portfolio)}).then(r=>r.json()), 30000)
+      : _cached('portfolio', () => fetch(`${API}/api/portfolio`).then(r=>r.json()), 30000);
 
-    const [portRes, indRes, newsRes, bcRes, mlRes] = await Promise.allSettled([
+    // PHASE 1: Load only portfolio + indices (fast) — show dashboard immediately
+    const [portRes, indRes] = await Promise.allSettled([
       portfolioEndpoint,
-      fetch(`${API}/api/indices`).then(r=>r.json()),
-      fetch(`${API}/api/news`).then(r=>r.json()),
-      fetch(`${API}/api/blockchain/status`).then(r=>r.json()),
-      fetch(`${API}/api/ml/insights`).then(r=>r.json()),
+      _cached('indices', () => fetch(`${API}/api/indices`).then(r=>r.json()), 30000),
+    ]);
+
+    // Render portfolio immediately
+    if (portRes.status === 'fulfilled') {
+      const p  = portRes.value;
+      const v  = p.summary.total_value;
+      const pl = p.summary.total_pnl;
+      const pp = p.summary.total_pnl_pct;
+      document.getElementById('dPortfolioValue').textContent = `₹${fmt(v)}`;
+      document.getElementById('dPortfolioSub').textContent   = `Invested: ₹${fmt(p.summary.total_invested)}`;
+      const plEl  = document.getElementById('dPnl');
+      const plSub = document.getElementById('dPnlSub');
+      plEl.textContent = `${pl>=0?'+':''}₹${fmt(Math.abs(pl))}`;
+      plEl.className   = `stat-value ${signCls(pl)}`;
+      plSub.className  = `stat-sub ${signCls(pl)}`;
+      plSub.textContent = `${signPfx(pp)}${fmtD(pp)}% overall return`;
+      document.getElementById('dHoldings').textContent = p.summary.holdings_count;
+      renderPerfChart(p.holdings);
+      renderHeroChart(p.holdings);
+      animateCountUp('heroPortfolioValue', v, '₹');
+      const heroChangeBadge = document.getElementById('heroChangeBadge');
+      const heroChangeSub   = document.getElementById('heroChangeSub');
+      const dayChangePct = p.summary.day_change_pct ?? pp;
+      const dayChangeVal = p.summary.day_change ?? pl;
+      const isPos = dayChangePct >= 0;
+      heroChangeBadge.className = `badge ${isPos?'badge-success':'badge-danger'}`;
+      heroChangeBadge.innerHTML = `${isPos?'↗':'↘'} ${signPfx(dayChangePct)}${fmtD(dayChangePct)}% Today`;
+      heroChangeSub.textContent = `${signPfx(dayChangeVal)}₹${fmt(Math.abs(dayChangeVal))} · ${p.summary.holdings_count} holdings`;
+    }
+    if (indRes.status === 'fulfilled') renderIndices(indRes.value);
+
+    // PHASE 2: Load secondary data in background (non-blocking)
+    const [newsRes, bcRes, mlRes] = await Promise.allSettled([
+      _cached('news', () => fetch(`${API}/api/news`).then(r=>r.json()), 120000),
+      _cached('bc_status', () => fetch(`${API}/api/blockchain/status`).then(r=>r.json()), 60000),
+      _cached('ml_insights', () => fetch(`${API}/api/ml/insights`).then(r=>r.json()), 60000),
     ]);
 
     if (portRes.status === 'fulfilled') {
@@ -1479,8 +1690,8 @@ async function loadPortfolio() {
   document.getElementById('holdingsBody').innerHTML = '<tr><td colspan="9"><div class="loader"><div class="spinner"></div></div></td></tr>';
   try {
     const data = APP.portfolio
-      ? await fetch(`${API}/api/portfolio/enrich`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(APP.portfolio)}).then(r=>r.json())
-      : await fetch(`${API}/api/portfolio`).then(r=>r.json());
+      ? await _cached('portfolio_custom', () => fetch(`${API}/api/portfolio/enrich`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(APP.portfolio)}).then(r=>r.json()), 30000)
+      : await _cached('portfolio', () => fetch(`${API}/api/portfolio`).then(r=>r.json()), 30000);
 
     const rm = data.risk_metrics;
     document.getElementById('rmBeta').textContent   = rm.beta;
@@ -1660,8 +1871,8 @@ async function loadBlockchain() {
   document.getElementById('blockList').innerHTML = '<div class="loader"><div class="spinner"></div><span>Loading blockchain...</span></div>';
   try {
     const [chainData, statusData] = await Promise.all([
-      fetch(`${API}/api/blockchain/chain`).then(r=>r.json()),
-      fetch(`${API}/api/blockchain/status`).then(r=>r.json()),
+      _cached('bc_chain', () => fetch(`${API}/api/blockchain/chain`).then(r=>r.json()), 60000),
+      _cached('bc_status', () => fetch(`${API}/api/blockchain/status`).then(r=>r.json()), 60000),
     ]);
     document.getElementById('bcBlocks').textContent   = statusData.total_blocks;
     document.getElementById('bcContract').textContent = statusData.contract_address;
@@ -1903,8 +2114,8 @@ async function refreshTicker() {
   try {
     // Fetch a sample of individual quotes for the ticker
     const [portData, indData] = await Promise.allSettled([
-      fetch(`${API}/api/portfolio`).then(r=>r.json()),
-      fetch(`${API}/api/indices`).then(r=>r.json()),
+      _cached('portfolio', () => fetch(`${API}/api/portfolio`).then(r=>r.json()), 30000),
+      _cached('indices', () => fetch(`${API}/api/indices`).then(r=>r.json()), 30000),
     ]);
 
     const items = [];
@@ -2066,8 +2277,7 @@ async function loadMLInsights() {
   document.getElementById('mlPredBody').innerHTML = '<tr><td colspan="7"><div class="loader"><div class="spinner"></div></div></td></tr>';
 
   try {
-    const r = await fetch(`${API}/api/ml/insights`);
-    const d = await r.json();
+    const d = await _cached('ml_insights', () => fetch(`${API}/api/ml/insights`).then(r=>r.json()), 60000);
     renderMLSummary(d.summary, d.market_regime);
     renderMLRegime(d.market_regime);
     renderMLRisk(d.portfolio_risk);
