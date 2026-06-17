@@ -1007,7 +1007,29 @@
       <div class="chain-stat-card"><div class="chain-stat-label">Contract Address</div><div class="chain-stat-value" style="font-family:'JetBrains Mono',monospace;font-size:12px" id="bcContract">--</div></div>
       <div class="chain-stat-card"><div class="chain-stat-label">Network</div><div class="chain-stat-value" id="bcNetwork">--</div></div>
     </div>
-    <div id="chainValidBanner" style="margin-bottom:20px"></div>
+    <div id="chainValidBanner" style="margin-bottom:12px"></div>
+
+    <!-- Layer 2 awareness banner (mentor feedback) -->
+    <div style="display:flex;align-items:flex-start;gap:12px;padding:14px 18px;margin-bottom:20px;
+      background:rgba(96,165,250,0.07);border:1px solid rgba(96,165,250,0.2);border-radius:var(--radius-md)">
+      <i data-lucide="zap" style="color:var(--accent);margin-top:2px;flex-shrink:0"></i>
+      <div>
+        <div style="font-size:13px;font-weight:600;color:var(--text-1);margin-bottom:3px">
+          Currently on Ethereum Sepolia Testnet — Zero gas fees for demo
+        </div>
+        <div style="font-size:12px;color:var(--text-2);line-height:1.6">
+          In production, PRAGATI.AI is designed to migrate to a <strong>Layer 2 solution</strong>
+          (Polygon PoS or Arbitrum One) or a <strong>Proof of Authority</strong> private chain to keep
+          audit logging costs under ₹0.01 per transaction — making blockchain-verified AI accessible
+          to retail investors at scale.
+        </div>
+        <div style="display:flex;gap:8px;margin-top:10px;flex-wrap:wrap">
+          <span class="badge badge-blue">Ethereum L1 → Testnet now</span>
+          <span class="badge badge-blue">Polygon PoS → Production plan</span>
+          <span class="badge badge-blue">PoA Chain → Enterprise option</span>
+        </div>
+      </div>
+    </div>
     <div class="grid-3" style="margin-bottom:24px">
       <div class="card" style="text-align:center"><div class="stat-label">Approved</div><div style="font-size:32px;font-weight:800;color:var(--success)" id="bcApproved">--</div></div>
       <div class="card" style="text-align:center"><div class="stat-label">Caution</div><div style="font-size:32px;font-weight:800;color:var(--warning)" id="bcCaution">--</div></div>
@@ -1859,6 +1881,50 @@ function renderAnalysisResults(data) {
   }
   html += '</div>';
 
+  // ── Explainability Panel (always shown, highlighted for REFUSE/CAUTION) ──
+  const isWarning = dec !== 'APPROVED';
+  const panelBg   = dec === 'REFUSED' ? 'var(--danger-dim)' : dec === 'CAUTION' ? 'rgba(245,158,11,0.08)' : 'var(--surface-2)';
+  const panelBorder= dec === 'REFUSED' ? 'rgba(239,68,68,0.25)' : dec === 'CAUTION' ? 'rgba(245,158,11,0.25)' : 'var(--border)';
+  const refusingAgents = data.agents.filter(a => a.verdict !== 'APPROVE');
+  const agentBreakdown = data.agents.map(a => {
+    const vcolor = a.verdict==='APPROVE' ? 'var(--success)' : a.verdict==='CAUTION' ? 'var(--warning)' : 'var(--danger)';
+    const vicon  = a.verdict==='APPROVE' ? '✓' : a.verdict==='CAUTION' ? '⚠' : '✕';
+    return `<div style="display:flex;align-items:flex-start;gap:10px;padding:10px 0;border-bottom:1px solid var(--border)">
+      <div style="width:22px;height:22px;border-radius:50%;background:${vcolor};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0">${vicon}</div>
+      <div style="flex:1">
+        <div style="font-size:12px;font-weight:600;color:var(--text-1)">${a.agent_name} <span style="color:${vcolor};margin-left:6px">${a.verdict}</span> <span style="color:var(--text-3);font-weight:400">· Score ${a.score}/100</span></div>
+        <div style="font-size:11.5px;color:var(--text-2);margin-top:3px;line-height:1.5">${a.findings[0] || ''}</div>
+      </div>
+    </div>`;
+  }).join('');
+
+  const keyReasons = refusingAgents.flatMap(a => a.findings.slice(0,2)).slice(0,4);
+  const reasonsHtml = keyReasons.map(r =>
+    `<li style="font-size:12px;color:var(--text-2);margin-bottom:6px;line-height:1.5">${r}</li>`
+  ).join('');
+
+  html += `
+  <div style="margin-top:20px;padding:20px;background:${panelBg};border:1px solid ${panelBorder};border-radius:var(--radius-md)">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:16px">
+      <i data-lucide="${isWarning ? 'alert-circle' : 'info'}"></i>
+      <div style="font-size:14px;font-weight:700;color:var(--text-1)">Why did AI reach this decision?</div>
+      <span class="badge ${dec==='APPROVED'?'badge-success':dec==='CAUTION'?'badge-warning':'badge-danger'}" style="margin-left:auto">${dec}</span>
+    </div>
+
+    ${isWarning && keyReasons.length ? `
+    <div style="margin-bottom:16px">
+      <div style="font-size:11px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-3);margin-bottom:8px">Key reasons for ${dec}</div>
+      <ul style="margin:0;padding-left:16px">${reasonsHtml}</ul>
+    </div>` : ''}
+
+    <div style="font-size:11px;font-weight:600;letter-spacing:0.8px;text-transform:uppercase;color:var(--text-3);margin-bottom:4px">Agent-by-agent breakdown</div>
+    <div>${agentBreakdown}</div>
+
+    <div style="margin-top:14px;padding:10px 14px;background:var(--surface-1);border-radius:var(--radius-sm);font-size:11.5px;color:var(--text-3);line-height:1.6">
+      <strong style="color:var(--text-2)">How consensus works:</strong> All 4 agents vote independently. A single REFUSE from Risk & Compliance triggers a full REFUSED decision. Two or more CAUTION votes override an APPROVE. Confidence score reflects agent agreement (${syn.confidence_score}% here).
+    </div>
+  </div>`;
+
   document.getElementById('analysisResults').innerHTML = html;
   // Use scoped icon creation to avoid touching nav tabs
   if (typeof lucide !== 'undefined') lucide.createIcons({ attrs:{} });
@@ -1911,7 +1977,8 @@ function renderBlock(b) {
           ${b.trade_freeze?'<span class="badge badge-danger" style="margin-top:4px">Trade Freeze</span>':''}
         </div>
       </div>
-      ${!isGenesis?`<div style="font-size:12px;color:var(--text-2);margin-bottom:10px">${b.advice}</div>`:''}
+      ${!isGenesis?`<div style="font-size:12px;color:var(--text-2);margin-bottom:${(b.decision==='REFUSED'||b.decision==='CAUTION')?'0':'10px'}">${b.advice}</div>`:''}
+      ${!isGenesis&&(b.decision==='REFUSED'||b.decision==='CAUTION')&&b.reasoning?`<div style="margin:8px 0 10px;padding:10px 12px;background:${b.decision==='REFUSED'?'var(--danger-dim)':'rgba(245,158,11,0.08)'};border-left:3px solid ${b.decision==='REFUSED'?'var(--danger)':'var(--warning)'};border-radius:0 var(--radius-sm) var(--radius-sm) 0;font-size:11.5px;color:var(--text-2);line-height:1.5"><strong style="color:${b.decision==='REFUSED'?'var(--danger)':'var(--warning)'}">${b.decision==='REFUSED'?'Reason for refusal:':'Reason for caution:'}</strong> ${b.reasoning}</div>`:''}
       ${agentChips?`<div class="block-agents">${agentChips}</div>`:''}
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:12px">
         <div><div class="hash-label">Block Hash</div><div class="hash-value">${b.hash.slice(0,32)}...</div></div>
@@ -2272,19 +2339,48 @@ function renderBlock(b) {
 // ML INSIGHTS
 // ════════════════════════════════════════════════
 async function loadMLInsights() {
-  // Show loaders
   document.getElementById('mlSummaryCards').innerHTML = '<div class="loader"><div class="spinner"></div><span>Running ML models...</span></div>';
   document.getElementById('mlPredBody').innerHTML = '<tr><td colspan="7"><div class="loader"><div class="spinner"></div></div></td></tr>';
 
-  try {
-    const d = await _cached('ml_insights', () => fetch(`${API}/api/ml/insights`).then(r=>r.json()), 60000);
-    renderMLSummary(d.summary, d.market_regime);
-    renderMLRegime(d.market_regime);
-    renderMLRisk(d.portfolio_risk);
-    renderMLPredictions(d.stock_predictions);
-    if (typeof lucide !== 'undefined') lucide.createIcons({ attrs:{} });
-  } catch(e) {
-    document.getElementById('mlSummaryCards').innerHTML = `<div style="color:var(--danger);padding:16px;font-size:13px">Could not load ML insights. Ensure backend is running.</div>`;
+  const MAX_RETRIES = 3;
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      // Clear cache on retry so we get a fresh fetch
+      if (attempt > 1) delete _cache['ml_insights'];
+      const d = await _cached('ml_insights', () =>
+        fetch(`${API}/api/ml/insights`).then(r => {
+          if (!r.ok) throw new Error(`HTTP ${r.status}`);
+          return r.json();
+        }), 60000);
+      renderMLSummary(d.summary, d.market_regime);
+      renderMLRegime(d.market_regime);
+      renderMLRisk(d.portfolio_risk);
+      renderMLPredictions(d.stock_predictions);
+      if (typeof lucide !== 'undefined') lucide.createIcons({ attrs:{} });
+      return; // success
+    } catch(e) {
+      if (attempt < MAX_RETRIES) {
+        document.getElementById('mlSummaryCards').innerHTML =
+          `<div style="padding:16px;font-size:13px;color:var(--warning)">
+            <div style="margin-bottom:8px">⚠️ ML models loading... (attempt ${attempt}/${MAX_RETRIES})</div>
+            <div style="height:4px;background:var(--border);border-radius:99px;overflow:hidden">
+              <div style="height:100%;width:${(attempt/MAX_RETRIES)*100}%;background:var(--warning);transition:width 0.4s"></div>
+            </div>
+          </div>`;
+        await new Promise(r => setTimeout(r, 2000 * attempt)); // backoff
+      } else {
+        document.getElementById('mlSummaryCards').innerHTML =
+          `<div style="padding:20px;background:var(--danger-dim);border:1px solid rgba(239,68,68,0.2);border-radius:var(--radius-md)">
+            <div style="font-size:14px;font-weight:600;color:var(--danger);margin-bottom:6px">⚠️ ML Insights Unavailable</div>
+            <div style="font-size:12px;color:var(--text-2);margin-bottom:12px">The ML engine could not be reached after ${MAX_RETRIES} attempts. This may happen when the server is cold-starting.</div>
+            <button class="btn btn-ghost" style="font-size:12px;padding:6px 14px" onclick="loadMLInsights()">
+              <i data-lucide="refresh-cw"></i> Retry Now
+            </button>
+          </div>`;
+        document.getElementById('mlPredBody').innerHTML = '<tr><td colspan="7" style="text-align:center;padding:24px;color:var(--text-3);font-size:13px">No predictions available — retry above</td></tr>';
+        if (typeof lucide !== 'undefined') lucide.createIcons({ attrs:{} });
+      }
+    }
   }
 }
 
